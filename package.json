@@ -1,0 +1,19 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio personnel de MZE Abdoul-Hachim",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "deploy": "cd client && npm run build && echo 'Fichiers prêts pour déploiement dans le dossier client/dist'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["portfolio", "développement web"],
+  "author": "MZE Abdoul-Hachim",
+  "license": "ISC",
+  "dependencies": {
+    "hono": "^4.6.20",
+    "tailwind": "^4.0.0"
+  }
+}
