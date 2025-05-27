@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaPaperPlane } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import emailjs from 'emailjs-com';
+import DOMPurify from 'dompurify';
 
 const ContactPage = () => {
   // Initialisation d'EmailJS
@@ -57,8 +58,11 @@ const ContactPage = () => {
 
   // Fonction pour prétraiter le message avant l'envoi
   const prepareMessageForEmail = (message) => {
+    // Sanitize le message d'abord
+    const sanitizedMessage = DOMPurify.sanitize(message);
+    
     // Convertit les sauts de ligne en balises HTML
-    const htmlMessage = message.replace(/\n/g, '<br />');
+    const htmlMessage = sanitizedMessage.replace(/\n/g, '<br />');
     
     // Détecte et transforme les URLs en liens cliquables
     const messageWithLinks = htmlMessage.replace(
@@ -66,7 +70,8 @@ const ContactPage = () => {
       '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #1d4ed8; text-decoration: underline;">$1</a>'
     );
     
-    return messageWithLinks;
+    // Sanitize à nouveau après avoir ajouté les liens
+    return DOMPurify.sanitize(messageWithLinks);
   };
 
   // Effet de parallaxe pour suivre la souris
@@ -157,15 +162,14 @@ const ContactPage = () => {
       try {
         // Envoi du formulaire avec EmailJS
         await emailjs.send(
-          'service_3pr2c3s',  // Remplacez par votre Service ID (trouvé dans Email Services)
-          'template_nriqzwh', // Remplacez par votre Template ID (trouvé dans Email Templates)
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
           {
-            from_name: formData.email, // Nom de l'expéditeur (l'email dans ce cas)
-            from_email: formData.email, // Email de l'expéditeur
-            message: formData.message, // Le message exactement comme saisi
-            // Pas de formatage HTML supplémentaire pour garantir que le message est transmis tel quel
+            from_name: formData.email,
+            from_email: formData.email,
+            message: formData.message,
           },
-          'fSmYrhfF6wl7uarp7' // Remplacez par votre Public Key (trouvée dans Account > API Keys)
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
         );
         
         // Réinitialiser le formulaire après succès
