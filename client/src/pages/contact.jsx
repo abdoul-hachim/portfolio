@@ -2,47 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPaperPlane } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
-import emailjs from 'emailjs-com';
+import emailjs from '@emailjs/browser';
 import DOMPurify from 'dompurify';
 
 const ContactPage = () => {
-  // Initialisation d'EmailJS
-  useEffect(() => {
-    // Vous pouvez initialiser EmailJS ici si nécessaire
-    // emailjs.init("votre_user_id");
-    
-    /* 
-    Exemple de modèle HTML pour EmailJS qui préserve le formatage exact du message :
-    
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Nouveau message de {{from_name}}</title>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        .header { background-color: #1d4ed8; color: white; padding: 10px 20px; border-radius: 5px 5px 0 0; margin-top: 0; }
-        .content { padding: 20px; }
-        .message { white-space: pre-wrap; font-family: monospace; background-color: #f9f9f9; padding: 15px; border-radius: 5px; }
-        .footer { font-size: 12px; color: #777; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 20px; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h2 class="header">Nouveau message de {{from_name}}</h2>
-        <div class="content">
-          <p><strong>De :</strong> {{from_email}}</p>
-          <p><strong>Message :</strong></p>
-          <pre class="message">{{message}}</pre>
-        </div>
-        <div class="footer">
-          <p>Ce message a été envoyé depuis le formulaire de contact de votre portfolio.</p>
-        </div>
-      </div>
-    </body>
-    </html>
-    */
-  }, []);
+  // Récupération des variables d'environnement pour EmailJS
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
   const [formData, setFormData] = useState({
     email: '',
@@ -55,6 +22,11 @@ const ContactPage = () => {
   const emailInputRef = useRef(null);
   const messageInputRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  // Initialisation d'EmailJS
+  useEffect(() => {
+    emailjs.init(PUBLIC_KEY);
+  }, []);
 
   // Fonction pour prétraiter le message avant l'envoi
   const prepareMessageForEmail = (message) => {
@@ -160,34 +132,35 @@ const ContactPage = () => {
       setIsSubmitting(true);
       
       try {
-        // Envoi du formulaire avec EmailJS
-        await emailjs.send(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-          {
-            from_name: formData.email,
-            from_email: formData.email,
-            message: formData.message,
-          },
-          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        const templateParams = {
+          email: formData.email,
+          message: prepareMessageForEmail(formData.message)
+        };
+
+        const result = await emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          templateParams
         );
         
-        // Réinitialiser le formulaire après succès
-        setFormData({ email: '', message: '' });
-        setSubmitStatus('success');
-        
-        // Réinitialiser le statut après 5 secondes
-        setTimeout(() => {
-          setSubmitStatus(null);
-        }, 5000);
+        if (result.status === 200) {
+          // Réinitialiser le formulaire après succès
+          setFormData({ email: '', message: '' });
+          setSubmitStatus('success');
+          
+          // Réinitialiser le statut après 5 secondes
+          setTimeout(() => {
+            setSubmitStatus(null);
+          }, 5000);
+        }
       } catch (error) {
-        console.error('Erreur lors de l\'envoi du formulaire:', error);
+        console.error('Erreur lors de l\'envoi du message:', error);
         setSubmitStatus('error');
         
-        // Réinitialiser le statut après 5 secondes
+        // Réinitialiser le statut après 8 secondes pour les erreurs
         setTimeout(() => {
           setSubmitStatus(null);
-        }, 5000);
+        }, 8000);
       } finally {
         setIsSubmitting(false);
       }
@@ -263,7 +236,7 @@ const ContactPage = () => {
                     formErrors.email 
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                       : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500'
-                  } bg-white dark:bg-gray-800 transition-all duration-300 focus:outline-none focus:ring-2`}
+                  } bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 focus:outline-none focus:ring-2`}
                   placeholder="exemple@email.com"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -290,7 +263,7 @@ const ContactPage = () => {
                   formErrors.message 
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                     : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-primary-500'
-                } bg-white dark:bg-gray-800 transition-all duration-300 focus:outline-none focus:ring-2`}
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 focus:outline-none focus:ring-2`}
                 placeholder="Décrivez votre projet ou posez votre question ici..."
               ></textarea>
               {formErrors.message && (
