@@ -13,10 +13,10 @@ const ListeProject = () => {
     },
     {
       id: 2,
-      titre: "Projet 2",
-      image: "/images/image1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum mattis felis vitae risus pulvinar tincidunt. Nam ac venenatis enim.",
-      lien: "/projet/2"
+      titre: "BigProjet",
+      image: "/images/bigProjetLogo.png",
+      description: "Application de gestion complète pour les écoles et centres de formation. Système intégré permettant la gestion des étudiants, des cours, des inscriptions et du suivi pédagogique.",
+      lien: "https://peru-ape-766379.hostingersite.com/login"
     },
     {
       id: 3,
@@ -72,14 +72,23 @@ const ListeProject = () => {
                 <p className="text-secondary text-center mb-4">
                   {projet.description}
                 </p>
-                <Link 
-                  to={projet.lien}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Découvrir le projet
-                </Link>
+                {projet.lien.startsWith('http') ? (
+                  <a 
+                    href={projet.lien}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Découvrir le projet
+                  </a>
+                ) : (
+                  <Link 
+                    to={projet.lien}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
+                  >
+                    Découvrir le projet
+                  </Link>
+                )}
               </div>
             </div>
           ))}
