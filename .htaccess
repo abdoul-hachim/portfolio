@@ -1,28 +1,52 @@
 # Activation du module de réécriture
 RewriteEngine On
 
-# Redirection pour les images
-RewriteRule ^images/(.*)$ dist/images/$1 [L]
+# Force HTTPS (optionnel, décommentez si nécessaire)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Redirection pour les assets CSS/JS
-RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+# Gestion des fichiers statiques avec plusieurs tentatives
+# Images et assets
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^images/(.*)$ dist/images/$1 [L,QSA]
 
-# Redirection pour les autres fichiers statiques
-RewriteRule ^(.*\.(css|js|png|jpg|jpeg|gif|svg|ico|pdf))$ dist/$1 [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^assets/(.*)$ dist/assets/$1 [L,QSA]
 
-# Fallback vers index.html pour les routes React
+# Fichiers spécifiques
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^vite\.svg$ dist/vite.svg [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^CV\.pdf$ dist/CV.pdf [L,QSA]
+
+# Tous les autres fichiers statiques
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*\.(css|js|png|jpg|jpeg|gif|svg|ico|pdf|webp))$ dist/$1 [L,QSA]
+
+# Fallback vers index.html pour les routes React (SPA)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/dist/
 RewriteRule ^(.*)$ index.html [QSA,L]
 
-# Configuration CORS si nécessaire
+# Configuration CORS
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 </IfModule>
 
 # Compression gzip pour améliorer les performances
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript application/json
+</IfModule>
+
+# Types MIME
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+    AddType application/javascript .js
+    AddType text/css .css
 </IfModule>
 
 # Mise en cache des ressources statiques
@@ -32,11 +56,19 @@ RewriteRule ^(.*)$ index.html [QSA,L]
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/pdf "access plus 1 month"
-    ExpiresByType text/x-javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType application/x-shockwave-flash "access plus 1 month"
     ExpiresByType image/x-icon "access plus 1 year"
     ExpiresDefault "access plus 2 days"
-</IfModule> 
+</IfModule>
+
+# Sécurité : empêcher l'accès aux fichiers sensibles
+<Files ~ "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+    Order allow,deny
+    Deny from all
+</Files> 

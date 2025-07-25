@@ -187,8 +187,22 @@ const AboutPage = () => {
               className="w-64 h-64 object-cover"
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = 'https://via.placeholder.com/256x256?text=Profile';
+                // Essayer plusieurs chemins possibles
+                const fallbacks = [
+                  './images/pp.JPG',
+                  '/dist/images/pp.JPG',
+                  './dist/images/pp.JPG',
+                  'https://via.placeholder.com/256x256?text=Profile'
+                ];
+                const currentSrc = e.target.src;
+                const currentIndex = fallbacks.findIndex(path => currentSrc.includes(path.split('/').pop()));
+                if (currentIndex < fallbacks.length - 1) {
+                  e.target.src = fallbacks[currentIndex + 1];
+                } else {
+                  e.target.src = 'https://via.placeholder.com/256x256?text=Profile';
+                }
               }}
+              loading="lazy"
             />
           </motion.div>
         </div>
