@@ -7,42 +7,42 @@ const ListeProject = () => {
     {
       id: 1,
       titre: "Site E-commerce Fitmode",
-      image: "/images/fitmode.png",
+      image: "/client/public/images/fitmode.png",
       description: "Une boutique en ligne moderne de vêtements et accessoires de sport, développée avec des technologies web avancées pour offrir une expérience d'achat fluide et responsive.",
       lien: "https://derroce.com/shopping-website/"
     },
     {
       id: 2,
       titre: "BigProjet",
-      image: "/images/bigProjetLogo.png",
+      image: "/client/public/images/bigProjetLogo.png",
       description: "Application de gestion complète pour les écoles et centres de formation. Système intégré permettant la gestion des étudiants, des cours, des inscriptions et du suivi pédagogique.",
       lien: "https://peru-ape-766379.hostingersite.com/login"
     },
     {
       id: 3,
       titre: "Projet 3",
-      image: "/images/image1.png",
+      image: "/client/public/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempus placerat fringilla. Duis a elit et dolor laoreet volutpat.",
       lien: "/projet/3"
     },
     {
       id: 4,
       titre: "Projet 4",
-      image: "/images/image1.png",
+      image: "/client/public/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et diam eget libero egestas mattis sit amet vitae augue.",
       lien: "/projet/4"
     },
     {
       id: 5,
       titre: "Projet 5",
-      image: "/images/image1.png",
+      image: "/client/public/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales congue tristique. Cras non pretium sem.",
       lien: "/projet/5"
     },
     {
       id: 6,
       titre: "Projet 6",
-      image: "/images/image1.png",
+      image: "/client/public/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit mauris ac porttitor accumsan. Nunc vitae pulvinar odio, quis dignissim sem.",
       lien: "/projet/6"
     }

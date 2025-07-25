@@ -44,6 +44,7 @@ const copyRootIndexPlugin = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), copyRootIndexPlugin()],
+  publicDir: 'public', // Assure que le dossier public est bien pris en compte
   build: {
     outDir: resolve(__dirname, '../dist'),
     emptyOutDir: true,
@@ -63,4 +64,10 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  server: {
+    // Pour le serveur de développement
+    fs: {
+      allow: ['..']
+    }
+  }
 })
