@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet-async';
 const AboutPage = () => {
   const timelineRef = useRef(null);
   const experienceRefs = useRef([]);
-  const progressBarsRef = useRef([]);
+
   const introRef = useRef(null);
   const skillsRef = useRef(null);
   const profileImageRef = useRef(null);
@@ -59,23 +59,7 @@ const AboutPage = () => {
       });
     };
 
-    // Observer pour les barres de progression
-    const handleProgressBarIntersect = (entries, observer) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          const progressBar = entry.target;
-          const progressFill = progressBar.querySelector('.progress-bar-fill');
-          if (progressFill) {
-            // Ajouter un délai progressif pour chaque barre
-            setTimeout(() => {
-              progressFill.classList.add('animate');
-              progressFill.style.transition = `transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s`;
-            }, index * 100);
-          }
-          observer.unobserve(progressBar);
-        }
-      });
-    };
+
 
     // Observer pour les sections
     const handleSectionIntersect = (entries, observer) => {
@@ -110,7 +94,7 @@ const AboutPage = () => {
     };
 
     const experienceObserver = new IntersectionObserver(handleExperienceIntersect, observerOptions);
-    const progressBarObserver = new IntersectionObserver(handleProgressBarIntersect, observerOptions);
+
     const sectionObserver = new IntersectionObserver(handleSectionIntersect, observerOptions);
     const profileImageObserver = new IntersectionObserver(handleProfileImageIntersect, observerOptions);
 
@@ -128,12 +112,7 @@ const AboutPage = () => {
       }
     });
 
-    // Observer les barres de progression
-    progressBarsRef.current.forEach((ref) => {
-      if (ref) {
-        progressBarObserver.observe(ref);
-      }
-    });
+
 
     // Observer l'intro et les compétences
     if (introRef.current) {
@@ -153,27 +132,27 @@ const AboutPage = () => {
 
     return () => {
       experienceObserver.disconnect();
-      progressBarObserver.disconnect();
+
       sectionObserver.disconnect();
       profileImageObserver.disconnect();
     };
   }, []);
 
   const frontendSkills = [
-    { name: 'HTML', icon: <SiHtml5 className="text-orange-500" />, percentage: 90 },
-    { name: 'CSS', icon: <SiCss3 className="text-blue-500" />, percentage: 85 },
-    { name: 'JavaScript', icon: <SiJavascript className="text-yellow-400" />, percentage: 80 },
-    { name: 'React', icon: <SiReact className="text-blue-400" />, percentage: 75 },
-    { name: 'Tailwind CSS', icon: <SiTailwindcss className="text-teal-400" />, percentage: 85 },
+    { name: 'HTML', icon: <SiHtml5 className="text-orange-500" /> },
+    { name: 'CSS', icon: <SiCss3 className="text-blue-500" /> },
+    { name: 'JavaScript', icon: <SiJavascript className="text-yellow-400" /> },
+    { name: 'React', icon: <SiReact className="text-blue-400" /> },
+    { name: 'Tailwind CSS', icon: <SiTailwindcss className="text-teal-400" /> },
   ];
 
   const backendSkills = [
-    { name: 'PHP', icon: <SiPhp className="text-purple-500" />, percentage: 80 },
-    { name: 'Symfony', icon: <SiSymfony className="text-black dark:text-white" />, percentage: 75 },
-    { name: 'Node.js', icon: <SiNodedotjs className="text-green-500" />, percentage: 70 },
-    { name: 'Express', icon: <SiExpress className="text-gray-600" />, percentage: 65 },
-    { name: 'MongoDB', icon: <SiMongodb className="text-green-600" />, percentage: 65 },
-    { name: 'API REST', icon: <TbApi className="text-blue-500" />, percentage: 70 },
+    { name: 'PHP', icon: <SiPhp className="text-purple-500" /> },
+    { name: 'Symfony', icon: <SiSymfony className="text-black dark:text-white" /> },
+    { name: 'Node.js', icon: <SiNodedotjs className="text-green-500" /> },
+    { name: 'Express', icon: <SiExpress className="text-gray-600" /> },
+    { name: 'MongoDB', icon: <SiMongodb className="text-green-600" /> },
+    { name: 'API REST', icon: <TbApi className="text-blue-500" /> },
   ];
 
   return (
@@ -372,19 +351,9 @@ const AboutPage = () => {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  <div className="flex items-center mb-2">
+                  <div className="flex items-center">
                     <div className="text-2xl mr-2">{skill.icon}</div>
                     <span className="font-medium">{skill.name}</span>
-                    <span className="ml-auto">{skill.percentage}%</span>
-                  </div>
-                  <div 
-                    ref={(el) => (progressBarsRef.current.push(el))} 
-                    className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 progress-bar"
-                  >
-                    <div 
-                      className="bg-primary-500 h-2.5 rounded-full progress-bar-fill" 
-                      style={{ width: `${skill.percentage}%` }}
-                    ></div>
                   </div>
                 </div>
               ))}
@@ -407,19 +376,9 @@ const AboutPage = () => {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  <div className="flex items-center mb-2">
+                  <div className="flex items-center">
                     <div className="text-2xl mr-2">{skill.icon}</div>
                     <span className="font-medium">{skill.name}</span>
-                    <span className="ml-auto">{skill.percentage}%</span>
-                  </div>
-                  <div 
-                    ref={(el) => (progressBarsRef.current.push(el))} 
-                    className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 progress-bar"
-                  >
-                    <div 
-                      className="bg-primary-500 h-2.5 rounded-full progress-bar-fill" 
-                      style={{ width: `${skill.percentage}%` }}
-                    ></div>
                   </div>
                 </div>
               ))}
