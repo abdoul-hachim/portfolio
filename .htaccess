@@ -1,12 +1,19 @@
 # Activation du module de réécriture
 RewriteEngine On
 
-# Redirection de toutes les requêtes vers index.html
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
+# Redirection pour les images
+RewriteRule ^images/(.*)$ dist/images/$1 [L]
+
+# Redirection pour les assets CSS/JS
+RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+
+# Redirection pour les autres fichiers statiques
+RewriteRule ^(.*\.(css|js|png|jpg|jpeg|gif|svg|ico|pdf))$ dist/$1 [L]
+
+# Fallback vers index.html pour les routes React
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+RewriteRule ^(.*)$ index.html [QSA,L]
 
 # Configuration CORS si nécessaire
 <IfModule mod_headers.c>

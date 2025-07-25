@@ -35,8 +35,15 @@ const copyRootIndexPlugin = () => {
       indexContent = indexContent.replace(/href="\/client\/public\//g, 'href="/')
       indexContent = indexContent.replace(/src="\/client\/public\//g, 'src="/')
       
-      // Écrit le fichier final
-      writeFileSync(resolve(__dirname, '../dist/index.html'), indexContent)
+      // Écrit le fichier final avec un petit délai pour éviter les conflits
+      setTimeout(() => {
+        try {
+          writeFileSync(resolve(__dirname, '../dist/index.html'), indexContent)
+          console.log('✅ Index.html personnalisé copié avec succès')
+        } catch (error) {
+          console.error('❌ Erreur lors de la copie de index.html:', error.message)
+        }
+      }, 100)
     }
   }
 }
@@ -45,6 +52,7 @@ const copyRootIndexPlugin = () => {
 export default defineConfig({
   plugins: [react(), copyRootIndexPlugin()],
   publicDir: 'public', // Assure que le dossier public est bien pris en compte
+  base: '/', // Définit la base URL pour les assets
   build: {
     outDir: resolve(__dirname, '../dist'),
     emptyOutDir: true,
