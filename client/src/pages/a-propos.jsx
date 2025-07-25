@@ -182,7 +182,7 @@ const AboutPage = () => {
             }}
           >
             <img
-              src="/client/public/images/pp.JPG"
+              src="/images/pp.JPG"
               alt="Photo de profil"
               className="w-64 h-64 object-cover"
               onError={(e) => {
