@@ -7,42 +7,42 @@ const ListeProject = () => {
     {
       id: 1,
       titre: "Site E-commerce Fitmode",
-      image: "/client/public/images/fitmode.png",
+      image: "/images/fitmode.png",
       description: "Une boutique en ligne moderne de vêtements et accessoires de sport, développée avec des technologies web avancées pour offrir une expérience d'achat fluide et responsive.",
       lien: "https://derroce.com/shopping-website/"
     },
     {
       id: 2,
       titre: "BigProjet",
-      image: "/client/public/images/bigProjetLogo.png",
+      image: "/images/bigProjetLogo.png",
       description: "Application de gestion complète pour les écoles et centres de formation. Système intégré permettant la gestion des étudiants, des cours, des inscriptions et du suivi pédagogique.",
       lien: "https://peru-ape-766379.hostingersite.com/login"
     },
     {
       id: 3,
       titre: "Projet 3",
-      image: "/client/public/images/image1.png",
+      image: "/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempus placerat fringilla. Duis a elit et dolor laoreet volutpat.",
       lien: "/projet/3"
     },
     {
       id: 4,
       titre: "Projet 4",
-      image: "/client/public/images/image1.png",
+      image: "/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et diam eget libero egestas mattis sit amet vitae augue.",
       lien: "/projet/4"
     },
     {
       id: 5,
       titre: "Projet 5",
-      image: "/client/public/images/image1.png",
+      image: "/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales congue tristique. Cras non pretium sem.",
       lien: "/projet/5"
     },
     {
       id: 6,
       titre: "Projet 6",
-      image: "/client/public/images/image1.png",
+      image: "/images/image1.png",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit mauris ac porttitor accumsan. Nunc vitae pulvinar odio, quis dignissim sem.",
       lien: "/projet/6"
     }
@@ -59,17 +59,17 @@ const ListeProject = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projets.map((projet) => (
             <div key={projet.id} className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
-              <div className="absolute inset-0 bg-dark-900 bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-dark-900 bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
               <img 
                 src={projet.image} 
                 alt={projet.titre}
                 className="w-full h-64 object-cover"
               />
-              <div className="absolute inset-0 flex flex-col justify-center items-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h2 className="text-2xl font-bold text-primary mb-2">
+              <div className="absolute inset-0 flex flex-col justify-center items-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                <h2 className="text-2xl font-bold text-white mb-2 text-center drop-shadow-lg">
                   {projet.titre}
                 </h2>
-                <p className="text-secondary text-center mb-4">
+                <p className="text-gray-200 text-center mb-4 drop-shadow-md">
                   {projet.description}
                 </p>
                 {projet.lien.startsWith('http') ? (
