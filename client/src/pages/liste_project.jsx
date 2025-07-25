@@ -1,3 +1,4 @@
+// Version clean à utiliser après tests
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -48,6 +49,52 @@ const ListeProject = () => {
     }
   ];
 
+  const overlayStyle = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    opacity: 0,
+    transition: 'opacity 0.3s ease',
+    zIndex: 10
+  };
+
+  const contentStyle = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '24px',
+    opacity: 0,
+    transition: 'opacity 0.3s ease',
+    zIndex: 20
+  };
+
+  const titleStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: '8px',
+    textAlign: 'center',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+    lineHeight: '1.2'
+  };
+
+  const descriptionStyle = {
+    color: '#e5e5e5',
+    textAlign: 'center',
+    marginBottom: '16px',
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
+    lineHeight: '1.4'
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 bg-site">
       <div className="max-w-7xl mx-auto">
@@ -58,24 +105,41 @@ const ListeProject = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projets.map((projet) => (
-            <div key={projet.id} className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
-              <div className="absolute inset-0 bg-dark-900 bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+            <div 
+              key={projet.id} 
+              className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card"
+            >
               <img 
                 src={projet.image} 
                 alt={projet.titre}
                 className="w-full h-64 object-cover"
               />
-              <div className="absolute inset-0 flex flex-col justify-center items-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-                <h2 className="text-2xl font-bold text-white mb-2 text-center drop-shadow-lg">
+              <div 
+                style={overlayStyle}
+                className="group-hover:opacity-100"
+              ></div>
+              <div 
+                style={contentStyle}
+                className="group-hover:opacity-100"
+              >
+                <h2 style={titleStyle}>
                   {projet.titre}
                 </h2>
-                <p className="text-gray-200 text-center mb-4 drop-shadow-md">
+                <p style={descriptionStyle}>
                   {projet.description}
                 </p>
                 {projet.lien.startsWith('http') ? (
                   <a 
                     href={projet.lien}
                     className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
+                    style={{
+                      backgroundColor: '#1d4ed8',
+                      color: '#ffffff',
+                      padding: '8px 24px',
+                      borderRadius: '9999px',
+                      textDecoration: 'none',
+                      transition: 'background-color 0.3s ease'
+                    }}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -85,6 +149,14 @@ const ListeProject = () => {
                   <Link 
                     to={projet.lien}
                     className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
+                    style={{
+                      backgroundColor: '#1d4ed8',
+                      color: '#ffffff',
+                      padding: '8px 24px',
+                      borderRadius: '9999px',
+                      textDecoration: 'none',
+                      transition: 'background-color 0.3s ease'
+                    }}
                   >
                     Découvrir le projet
                   </Link>
