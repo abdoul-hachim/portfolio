@@ -31,6 +31,10 @@ const copyRootIndexPlugin = () => {
         )
       }
       
+      // Corrige les chemins des images et assets
+      indexContent = indexContent.replace(/href="\/client\/public\//g, 'href="/')
+      indexContent = indexContent.replace(/src="\/client\/public\//g, 'src="/')
+      
       // Écrit le fichier final
       writeFileSync(resolve(__dirname, '../dist/index.html'), indexContent)
     }
