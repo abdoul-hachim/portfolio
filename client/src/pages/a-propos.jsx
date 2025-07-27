@@ -182,13 +182,14 @@ const AboutPage = () => {
             }}
           >
             <img
-              src="/images/pp.JPG"
+              src="./images/pp.JPG"
               alt="Photo de profil"
               className="w-64 h-64 object-cover"
               onError={(e) => {
                 e.target.onerror = null;
                 // Essayer plusieurs chemins possibles
                 const fallbacks = [
+                  '/images/pp.JPG',
                   './images/pp.JPG',
                   '/dist/images/pp.JPG',
                   './dist/images/pp.JPG',
@@ -197,7 +198,7 @@ const AboutPage = () => {
                 const currentSrc = e.target.src;
                 const currentIndex = fallbacks.findIndex(path => currentSrc.includes(path.split('/').pop()));
                 if (currentIndex < fallbacks.length - 1) {
-                  e.target.src = fallbacks[currentIndex + 1];
+                  e.target.src = window.location.origin + fallbacks[currentIndex + 1];
                 } else {
                   e.target.src = 'https://via.placeholder.com/256x256?text=Profile';
                 }
@@ -221,10 +222,10 @@ const AboutPage = () => {
             Passionné par les nouvelles technologies et l'innovation, je m'efforce de créer des expériences utilisateur intuitives et esthétiques tout en garantissant des performances optimales et une sécurité robuste.
           </p>
           <div className="flex flex-wrap gap-2 mt-6">
-            <Link to="/projets" className="btn btn-primary hover:animate-pulse-slow">Voir mes projets</Link>
+            <Link to="/liste_project" className="btn btn-primary hover:animate-pulse-slow">Voir mes projets</Link>
             <Link to="/contact" className="btn btn-accent hover:animate-pulse-slow">Me contacter</Link>
             <a 
-              href="/cv.pdf" 
+              href="/CV.pdf" 
               download="MZE_Abdoul-Hachim_CV.pdf" 
               className="btn btn-secondary flex items-center gap-2 hover:animate-pulse-slow"
               rel="noopener noreferrer"
@@ -414,7 +415,7 @@ const AboutPage = () => {
         </p>
         <div className="flex justify-center gap-4">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/projets" className="btn btn-primary">
+            <Link to="/liste_project" className="btn btn-primary">
               Voir mes projets
             </Link>
           </motion.div>

@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
 import ListeProject from './pages/liste_project.jsx'
 import AboutPage from './pages/a-propos.jsx'
 import ContactPage from './pages/contact.jsx'
 import Study from './pages/study.jsx'
+import NotFound from './pages/NotFound.jsx'
 import Header from './components/header.jsx'
 import Footer from './components/footer.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
@@ -22,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/liste_project" element={<ListeProject />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/study" element={<Study />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         <Footer />
