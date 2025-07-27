@@ -10,6 +10,9 @@ dist/
 # Fichiers de production copiés à la racine (générés par deploy-prod seulement)
 /assets/
 
+# Fichier de diagnostic temporaire
+test.html
+
 # Fichiers d'environnement
 .env
 .env.local
