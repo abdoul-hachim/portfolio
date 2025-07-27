@@ -1,62 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import { readFileSync, writeFileSync } from 'fs'
-
-// Plugin personnalisé pour copier l'index.html de la racine
-const copyRootIndexPlugin = () => {
-  return {
-    name: 'copy-root-index',
-    writeBundle(options, bundle) {
-      // Trouve les fichiers JS et CSS générés
-      const jsFile = Object.keys(bundle).find(file => file.endsWith('.js') && file.startsWith('assets/index.'))
-      const cssFile = Object.keys(bundle).find(file => file.endsWith('.css') && file.startsWith('assets/index.'))
-      
-      // Lit l'index.html de la racine et remplace les chemins
-      let indexContent = readFileSync(resolve(__dirname, '../index.html'), 'utf-8')
-      
-      // Remplace le script src par le fichier JS généré
-      if (jsFile) {
-        indexContent = indexContent.replace(
-          '<script type="module" src="./client/src/main.jsx"></script>',
-          `<script type="module" crossorigin src="/${jsFile}"></script>`
-        )
-      }
-      
-      // Ajoute le CSS généré dans le head
-      if (cssFile) {
-        indexContent = indexContent.replace(
-          '</head>',
-          `    <link rel="stylesheet" href="/${cssFile}">\n  </head>`
-        )
-      }
-      
-      // Corrige les chemins des images et assets
-      indexContent = indexContent.replace(/href="\/client\/public\//g, 'href="/')
-      indexContent = indexContent.replace(/src="\/client\/public\//g, 'src="/')
-      
-      // Écrit le fichier final avec un petit délai pour éviter les conflits
-      setTimeout(() => {
-        try {
-          writeFileSync(resolve(__dirname, '../dist/index.html'), indexContent)
-          console.log('✅ Index.html personnalisé copié avec succès')
-        } catch (error) {
-          console.error('❌ Erreur lors de la copie de index.html:', error.message)
-        }
-      }, 100)
-    }
-  }
-}
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), copyRootIndexPlugin()],
-  publicDir: 'public', // Assure que le dossier public est bien pris en compte
-  base: '/', // Définit la base URL pour les assets
+  plugins: [react()],
+  publicDir: 'public',
+  base: '/',
   build: {
     outDir: resolve(__dirname, '../dist'),
     emptyOutDir: true,
-    // Configuration pour l'hébergement
     minify: 'terser',
     rollupOptions: {
       output: {
@@ -73,7 +26,6 @@ export default defineConfig({
     },
   },
   server: {
-    // Pour le serveur de développement
     fs: {
       allow: ['..']
     }
