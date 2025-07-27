@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "cd client && npm run dev",
-    "build": "cd client && npm run build",
-    "deploy": "cd client && npm run build && echo 'Fichiers prêts pour déploiement dans le dossier client/dist'",
+    "build": "cd client && npm run build && node scripts/copy-index-to-root.js",
+    "deploy": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["portfolio", "développement web"],
