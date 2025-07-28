@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio - Test Minimal</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .container {
+        background: rgba(255,255,255,0.1);
+        padding: 40px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+      }
+      .status { margin: 10px 0; padding: 10px; border-radius: 5px; }
+      .success { background: #4CAF50; }
+      .error { background: #f44336; }
+      .warning { background: #ff9800; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 Portfolio - Test de Diagnostic</h1>
+      
+      <div class="status success">
+        ✅ HTML + CSS intégré fonctionne
+      </div>
+      
+      <div id="js-test" class="status warning">
+        ❓ Test JavaScript en cours...
+      </div>
+      
+      <div id="fetch-test" class="status warning">
+        ❓ Test de chargement des assets...
+      </div>
+      
+      <div>
+        <h2>Informations de diagnostic :</h2>
+        <p><strong>URL actuelle :</strong> <span id="current-url"></span></p>
+        <p><strong>User Agent :</strong> <span id="user-agent"></span></p>
+      </div>
+      
+      <div>
+        <h3>Tests à effectuer manuellement :</h3>
+        <ul style="text-align: left;">
+          <li>Accéder à : <code>votredomaine.com/test-simple.html</code></li>
+          <li>Accéder à : <code>votredomaine.com/dist/assets/index.222cb8bc.js</code></li>
+          <li>Accéder à : <code>votredomaine.com/dist/assets/index.17776b04.css</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Test JavaScript basique
+      document.getElementById('js-test').innerHTML = '✅ JavaScript fonctionne';
+      document.getElementById('js-test').className = 'status success';
+      
+      // Informations de diagnostic
+      document.getElementById('current-url').textContent = window.location.href;
+      document.getElementById('user-agent').textContent = navigator.userAgent;
+      
+      // Test de fetch des assets
+      fetch('dist/assets/index.222cb8bc.js')
+        .then(response => {
+          const fetchTest = document.getElementById('fetch-test');
+          if (response.ok) {
+            fetchTest.innerHTML = '✅ Fichiers JS accessibles';
+            fetchTest.className = 'status success';
+          } else {
+            fetchTest.innerHTML = '❌ Erreur ' + response.status + ' - Fichiers JS non accessibles';
+            fetchTest.className = 'status error';
+          }
+        })
+        .catch(error => {
+          document.getElementById('fetch-test').innerHTML = '❌ Erreur réseau : ' + error.message;
+          document.getElementById('fetch-test').className = 'status error';
+        });
+    </script>
+  </body>
+</html> 
