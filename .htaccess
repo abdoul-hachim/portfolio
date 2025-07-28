@@ -1,6 +1,15 @@
 # Activation du module de réécriture
 RewriteEngine On
 
+# Configuration des types MIME en priorité
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType application/javascript .mjs
+    AddType text/css .css
+    AddType image/webp .webp
+    AddType application/json .json
+</IfModule>
+
 # Force HTTPS (optionnel, décommentez si nécessaire)
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
@@ -35,18 +44,19 @@ RewriteRule ^(.*)$ index.html [QSA,L]
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
     Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    
+    # Force les types MIME corrects pour les assets
+    <FilesMatch "\.(js|mjs)$">
+        Header set Content-Type "application/javascript"
+    </FilesMatch>
+    <FilesMatch "\.css$">
+        Header set Content-Type "text/css"
+    </FilesMatch>
 </IfModule>
 
 # Compression gzip pour améliorer les performances
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript application/json
-</IfModule>
-
-# Types MIME
-<IfModule mod_mime.c>
-    AddType image/webp .webp
-    AddType application/javascript .js
-    AddType text/css .css
 </IfModule>
 
 # Mise en cache des ressources statiques

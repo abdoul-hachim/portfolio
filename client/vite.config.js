@@ -15,10 +15,13 @@ const copyIndexToRoot = () => {
         // Lire le contenu du fichier dist/index.html
         let content = readFileSync(distIndexPath, 'utf-8')
         
-        // Corriger les chemins pour pointer vers dist/
-        content = content.replace(/href="\/assets\//g, 'href="/dist/assets/')
-        content = content.replace(/src="\/assets\//g, 'src="/dist/assets/')
-        content = content.replace('/images/', '/dist/images/')
+        // Corriger les chemins pour pointer vers dist/ (chemins relatifs pour Hostinger)
+        content = content.replace(/href="\.\//g, 'href="dist/')
+        content = content.replace(/src="\.\//g, 'src="dist/')
+        content = content.replace(/href="\/assets\//g, 'href="dist/assets/')
+        content = content.replace(/src="\/assets\//g, 'src="dist/assets/')
+        content = content.replace(/href="\/images\//g, 'href="dist/images/')
+        content = content.replace(/src="\/images\//g, 'src="dist/images/')
         
         // Écrire le fichier corrigé à la racine
         writeFileSync(rootIndexPath, content)
@@ -34,7 +37,7 @@ const copyIndexToRoot = () => {
 export default defineConfig({
   plugins: [react(), copyIndexToRoot()],
   publicDir: 'public',
-  base: '/',
+  base: './',
   build: {
     outDir: resolve(__dirname, '../dist'),
     emptyOutDir: true,

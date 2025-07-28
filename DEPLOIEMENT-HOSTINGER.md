@@ -88,13 +88,23 @@ npm start
 
 ### 🔧 Résolution de problèmes
 
+**Problème : Page blanche + erreur MIME type**
+```
+Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/html"
+```
+**Solution :**
+- ✅ Vérifiez que les fichiers sont dans la bonne structure
+- ✅ Le `.htaccess` est maintenant optimisé pour forcer les bons types MIME
+- ✅ L'`index.html` utilise maintenant des chemins relatifs vers `dist/`
+- ✅ Rebuilder le projet avec `npm run build` et re-uploader
+
 **Problème : Pages ne se chargent pas**
 - Vérifiez que le fichier `.htaccess` est présent
 - Vérifiez les permissions des fichiers (644 pour les fichiers, 755 pour les dossiers)
 
 **Problème : Assets ne se chargent pas**
 - Vérifiez que le dossier `dist/` est complet
-- Vérifiez que l'`index.html` de la racine pointe vers `/dist/assets/`
+- Vérifiez que l'`index.html` de la racine pointe vers `dist/assets/`
 
 **Problème : Erreur 404**
 - Vérifiez la configuration des redirections dans `.htaccess`
