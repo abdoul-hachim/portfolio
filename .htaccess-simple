@@ -1,0 +1,20 @@
+# Configuration basique pour Hostinger - Portfolio React
+RewriteEngine On
+
+# Redirection des assets vers le dossier dist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|svg|ico|pdf|webp)$ [NC]
+RewriteRule ^(.*)$ dist/$1 [L]
+
+# Redirection SPA - toutes les autres requêtes vers index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/dist/
+RewriteRule ^(.*)$ index.html [QSA,L]
+
+# Types MIME essentiels
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/css .css
+</IfModule> 
