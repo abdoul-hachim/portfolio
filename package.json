@@ -6,7 +6,10 @@
   "scripts": {
     "start": "cd client && npm run dev",
     "build": "cd client && npm run build",
-    "deploy": "npm run build",
+    "build:production": "cd client && npm run build && npm run deploy:copy",
+    "deploy": "npm run build:production",
+    "deploy:copy": "echo \"Projet prêt pour upload sur Hostinger - voir dossier dist/\"",
+    "clean": "rimraf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["portfolio", "développement web"],
