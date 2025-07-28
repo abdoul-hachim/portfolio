@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import { copyFileSync } from 'fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'fs'
 
-// Plugin personnalisé pour copier index.html vers la racine
+// Plugin personnalisé pour copier et corriger index.html vers la racine
 const copyIndexToRoot = () => {
   return {
     name: 'copy-index-to-root',
@@ -11,8 +11,18 @@ const copyIndexToRoot = () => {
       try {
         const distIndexPath = resolve(__dirname, '../dist/index.html')
         const rootIndexPath = resolve(__dirname, '../index.html')
-        copyFileSync(distIndexPath, rootIndexPath)
-        console.log('✅ index.html copié vers la racine pour Hostinger')
+        
+        // Lire le contenu du fichier dist/index.html
+        let content = readFileSync(distIndexPath, 'utf-8')
+        
+        // Corriger les chemins pour pointer vers dist/
+        content = content.replace(/href="\/assets\//g, 'href="/dist/assets/')
+        content = content.replace(/src="\/assets\//g, 'src="/dist/assets/')
+        content = content.replace('/images/', '/dist/images/')
+        
+        // Écrire le fichier corrigé à la racine
+        writeFileSync(rootIndexPath, content)
+        console.log('✅ index.html copié et corrigé vers la racine pour Hostinger')
       } catch (error) {
         console.error('❌ Erreur lors de la copie:', error.message)
       }
