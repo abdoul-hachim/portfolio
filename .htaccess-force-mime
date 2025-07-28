@@ -1,0 +1,51 @@
+# Configuration MIME forcée pour Hostinger
+RewriteEngine On
+
+# Force les types MIME - PREMIÈRE PRIORITÉ
+<IfModule mod_mime.c>
+    # JavaScript
+    AddType application/javascript .js
+    AddType application/javascript .mjs
+    AddType text/javascript .js
+    
+    # CSS
+    AddType text/css .css
+    
+    # Autres types
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/gif .gif
+    AddType image/svg+xml .svg
+    AddType application/pdf .pdf
+</IfModule>
+
+# Headers pour forcer les types MIME
+<IfModule mod_headers.c>
+    # Force JavaScript type
+    <FilesMatch "\.js$">
+        Header set Content-Type "application/javascript; charset=utf-8"
+        Header set X-Content-Type-Options "nosniff"
+    </FilesMatch>
+    
+    # Force CSS type
+    <FilesMatch "\.css$">
+        Header set Content-Type "text/css; charset=utf-8"
+    </FilesMatch>
+    
+    # Pas de cache pour le debug
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</IfModule>
+
+# Redirection des assets vers dist/ SEULEMENT si pas trouvés
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} \.(js|css|png|jpg|jpeg|gif|svg|ico|pdf)$ [NC]
+RewriteRule ^(.*)$ dist/$1 [L]
+
+# SPA fallback
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/dist/
+RewriteRule ^(.*)$ index.html [QSA,L] 
