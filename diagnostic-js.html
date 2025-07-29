@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Diagnostic JavaScript - Portfolio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-item {
+            background: rgba(255,255,255,0.1);
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #fbbf24;
+        }
+        .success { border-left-color: #10b981; background: rgba(16, 185, 129, 0.2); }
+        .error { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .warning { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.2); }
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .details {
+            font-size: 0.9em;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnostic des fichiers JavaScript</h1>
+        <p>Ce test va identifier pourquoi le fichier JavaScript ne se charge pas correctement.</p>
+
+        <div id="test-basic" class="test-item">
+            <h3>✅ Test 1: HTML/CSS de base</h3>
+            <div class="result">✅ Fonctionne - Vous voyez cette page</div>
+        </div>
+
+        <div id="test-js-inline" class="test-item warning">
+            <h3>🔄 Test 2: JavaScript inline</h3>
+            <div class="result">⏳ En cours...</div>
+        </div>
+
+        <div id="test-fetch-js" class="test-item warning">
+            <h3>🔄 Test 3: Accès au fichier JS</h3>
+            <div class="result">⏳ Test de <code>dist/assets/index.6bf7cd4c.js</code></div>
+            <div id="fetch-details" class="details"></div>
+        </div>
+
+        <div id="test-mime" class="test-item warning">
+            <h3>🔄 Test 4: Type MIME du fichier</h3>
+            <div class="result">⏳ Vérification du Content-Type...</div>
+            <div id="mime-details" class="details"></div>
+        </div>
+
+        <div id="test-load-script" class="test-item warning">
+            <h3>🔄 Test 5: Chargement direct du script</h3>
+            <div class="result">⏳ Test de chargement sans type="module"</div>
+            <div id="script-details" class="details"></div>
+        </div>
+
+        <div id="recommendations" class="test-item warning">
+            <h3>📋 Recommandations</h3>
+            <div id="recommendations-content">
+                <p>⏳ Analyse en cours...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test 2: JavaScript inline
+        document.addEventListener('DOMContentLoaded', function() {
+            const inlineTest = document.getElementById('test-js-inline');
+            inlineTest.className = 'test-item success';
+            inlineTest.querySelector('.result').innerHTML = '✅ JavaScript inline fonctionne';
+        });
+
+        // Test 3: Fetch du fichier JS
+        fetch('dist/assets/index.6bf7cd4c.js')
+            .then(response => {
+                const fetchTest = document.getElementById('test-fetch-js');
+                const details = document.getElementById('fetch-details');
+                
+                if (response.ok) {
+                    fetchTest.className = 'test-item success';
+                    fetchTest.querySelector('.result').innerHTML = '✅ Fichier JavaScript accessible';
+                    details.innerHTML = `Status: ${response.status}, Taille: ${response.headers.get('content-length') || 'inconnue'}`;
+                    
+                    // Test 4: Vérification MIME
+                    const mimeTest = document.getElementById('test-mime');
+                    const mimeDetails = document.getElementById('mime-details');
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && (contentType.includes('javascript') || contentType.includes('application/javascript') || contentType.includes('text/javascript'))) {
+                        mimeTest.className = 'test-item success';
+                        mimeTest.querySelector('.result').innerHTML = '✅ Type MIME correct';
+                        mimeDetails.innerHTML = `Content-Type: ${contentType}`;
+                    } else {
+                        mimeTest.className = 'test-item error';
+                        mimeTest.querySelector('.result').innerHTML = '❌ Type MIME incorrect';
+                        mimeDetails.innerHTML = `Content-Type reçu: "${contentType || 'aucun'}" - Devrait être "application/javascript" ou "text/javascript"`;
+                    }
+                    
+                    // Lire le début du fichier pour voir s'il contient du HTML
+                    return response.text();
+                } else {
+                    fetchTest.className = 'test-item error';
+                    fetchTest.querySelector('.result').innerHTML = '❌ Fichier JavaScript inaccessible';
+                    details.innerHTML = `Erreur ${response.status}: ${response.statusText}`;
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            })
+            .then(content => {
+                const firstLine = content.substring(0, 100);
+                const details = document.getElementById('fetch-details');
+                
+                if (firstLine.includes('<html') || firstLine.includes('<!DOCTYPE')) {
+                    details.innerHTML += '<br>⚠️ PROBLÈME: Le serveur retourne du HTML au lieu de JavaScript!';
+                } else {
+                    details.innerHTML += '<br>✅ Le contenu semble être du JavaScript valide';
+                }
+            })
+            .catch(error => {
+                const fetchTest = document.getElementById('test-fetch-js');
+                const details = document.getElementById('fetch-details');
+                
+                fetchTest.className = 'test-item error';
+                fetchTest.querySelector('.result').innerHTML = '❌ Erreur réseau';
+                details.innerHTML = `Erreur: ${error.message}`;
+            });
+
+        // Test 5: Chargement direct du script
+        setTimeout(() => {
+            const scriptTest = document.getElementById('test-load-script');
+            const scriptDetails = document.getElementById('script-details');
+            
+            const script = document.createElement('script');
+            script.src = 'dist/assets/index.6bf7cd4c.js';
+            script.onload = function() {
+                scriptTest.className = 'test-item success';
+                scriptTest.querySelector('.result').innerHTML = '✅ Script chargé avec succès';
+                scriptDetails.innerHTML = 'Le fichier JavaScript se charge correctement en mode normal';
+            };
+            script.onerror = function() {
+                scriptTest.className = 'test-item error';
+                scriptTest.querySelector('.result').innerHTML = '❌ Erreur de chargement du script';
+                scriptDetails.innerHTML = 'Le script ne peut pas être chargé - vérifiez la console pour plus de détails';
+            };
+            
+            // Ne pas l'ajouter au DOM pour éviter les conflits, juste tester le chargement
+            script.remove();
+        }, 2000);
+
+        // Générer les recommandations
+        setTimeout(() => {
+            const recommendations = document.getElementById('recommendations-content');
+            recommendations.innerHTML = `
+                <p><strong>Solutions à tester dans l'ordre :</strong></p>
+                <ol>
+                    <li>Vérifiez que le fichier <code>dist/assets/index.6bf7cd4c.js</code> existe sur votre serveur</li>
+                    <li>Configurez votre serveur pour servir les fichiers .js avec le bon MIME type</li>
+                    <li>Utilisez la version sans React (<code>index-sans-js.html</code>) comme solution temporaire</li>
+                    <li>Vérifiez les permissions des fichiers sur votre hébergeur</li>
+                </ol>
+                <p><strong>URL de test direct :</strong> <a href="dist/assets/index.6bf7cd4c.js" target="_blank" style="color: #60a5fa;">Cliquez ici pour accéder directement au fichier JS</a></p>
+            `;
+        }, 3000);
+
+        // Logger les informations utiles
+        console.log('=== INFORMATIONS DE DIAGNOSTIC ===');
+        console.log('URL actuelle:', window.location.href);
+        console.log('User Agent:', navigator.userAgent);
+        console.log('Fichier JS attendu: dist/assets/index.6bf7cd4c.js');
+        console.log('========================================');
+    </script>
+</body>
+</html> 
