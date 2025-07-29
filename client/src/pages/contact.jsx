@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaPaperPlane } from 'react-icons/fa';
+import { FaEnvelope, FaPaperPlane, FaExclamationTriangle } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import emailjs from '@emailjs/browser';
 import DOMPurify from 'dompurify';
@@ -18,15 +18,38 @@ const ContactPage = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [configError, setConfigError] = useState(null);
   const formRef = useRef(null);
   const emailInputRef = useRef(null);
   const messageInputRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Initialisation d'EmailJS
+  // Vérification et initialisation d'EmailJS
   useEffect(() => {
-    emailjs.init(PUBLIC_KEY);
-  }, []);
+    // Vérifier que toutes les variables d'environnement nécessaires sont présentes
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      const missingVars = [];
+      if (!SERVICE_ID) missingVars.push('VITE_EMAILJS_SERVICE_ID');
+      if (!TEMPLATE_ID) missingVars.push('VITE_EMAILJS_TEMPLATE_ID');
+      if (!PUBLIC_KEY) missingVars.push('VITE_EMAILJS_PUBLIC_KEY');
+      
+      setConfigError(
+        `Configuration EmailJS incomplète. Variables manquantes : ${missingVars.join(', ')}`
+      );
+      console.error('Variables d\'environnement EmailJS manquantes:', missingVars);
+      return;
+    }
+
+    try {
+      // Initialiser EmailJS avec la clé publique
+      emailjs.init(PUBLIC_KEY);
+      console.log('EmailJS initialisé avec succès');
+      setConfigError(null);
+    } catch (error) {
+      console.error('Erreur lors de l\'initialisation d\'EmailJS:', error);
+      setConfigError('Erreur d\'initialisation d\'EmailJS. Vérifiez la clé publique.');
+    }
+  }, [SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY]);
 
   // Fonction pour prétraiter le message avant l'envoi
   const prepareMessageForEmail = (message) => {
@@ -128,6 +151,15 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Vérifier la configuration EmailJS avant de procéder
+    if (configError) {
+      setSubmitStatus('config_error');
+      setTimeout(() => {
+        setSubmitStatus(null);
+      }, 8000);
+      return;
+    }
+    
     if (validateForm()) {
       setIsSubmitting(true);
       
@@ -210,6 +242,24 @@ const ContactPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
+          {/* Message d'erreur de configuration */}
+          {configError && (
+            <motion.div 
+              className="mb-6 p-4 bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-lg border border-yellow-300 dark:border-yellow-600"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="flex items-center">
+                <FaExclamationTriangle className="mr-3 text-yellow-500" />
+                <div>
+                  <p className="font-semibold mb-1">Configuration manquante</p>
+                  <p className="text-sm">{configError}</p>
+                  <p className="text-sm mt-2">Veuillez configurer les variables d'environnement EmailJS dans votre fichier .env</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Effet de particules en arrière-plan */}
           <div className="absolute inset-0 z-0 opacity-10">
             <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-primary-500"></div>
@@ -274,10 +324,12 @@ const ContactPage = () => {
             <div className="text-center">
               <motion.button
                 type="submit"
-                disabled={isSubmitting}
-                className="btn btn-primary px-8 py-3 text-lg relative overflow-hidden group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isSubmitting || configError}
+                className={`btn btn-primary px-8 py-3 text-lg relative overflow-hidden group ${
+                  configError ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                whileHover={{ scale: configError ? 1 : 1.05 }}
+                whileTap={{ scale: configError ? 1 : 0.95 }}
               >
                 <span className="relative z-10 flex items-center justify-center">
                   {isSubmitting ? (
@@ -317,6 +369,17 @@ const ContactPage = () => {
                 exit={{ opacity: 0, y: -20 }}
               >
                 <p className="text-center">Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer plus tard.</p>
+              </motion.div>
+            )}
+
+            {submitStatus === 'config_error' && (
+              <motion.div 
+                className="mt-6 p-4 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 rounded-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <p className="text-center">Impossible d'envoyer le message : configuration EmailJS manquante. Contactez l'administrateur.</p>
               </motion.div>
             )}
           </form>
