@@ -23,6 +23,16 @@ const copyIndexToRoot = () => {
         content = content.replace(/href="\/images\//g, 'href="dist/images/')
         content = content.replace(/src="\/images\//g, 'src="dist/images/')
         
+        // S'assurer que les scripts sont dans le body, pas dans le head
+        content = content.replace(
+          /(<head>[\s\S]*?)(<script[^>]*>[\s\S]*?<\/script>)([\s\S]*?<\/head>)([\s\S]*?)(<div id="root"><\/div>)/,
+          '$1$3$4$5\n    $2'
+        )
+        
+        // Ajouter des paramètres de cache-busting
+        content = content.replace(/\.js"/g, '.js?v=1.0"')
+        content = content.replace(/\.css"/g, '.css?v=1.0"')
+        
         // Écrire le fichier corrigé à la racine
         writeFileSync(rootIndexPath, content)
         console.log('✅ index.html copié et corrigé vers la racine pour Hostinger')
