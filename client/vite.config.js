@@ -29,6 +29,9 @@ const copyIndexToRoot = () => {
           '$1$3$4$5\n    $2'
         )
         
+        // Retirer type="module" pour la compatibilité hébergeur
+        content = content.replace(/type="module"\s*/g, '')
+        
         // Ajouter des paramètres de cache-busting
         content = content.replace(/\.js"/g, '.js?v=1.0"')
         content = content.replace(/\.css"/g, '.css?v=1.0"')
@@ -52,12 +55,18 @@ export default defineConfig({
     outDir: resolve(__dirname, '../dist'),
     emptyOutDir: true,
     minify: 'terser',
+    target: 'es2015', // Support des navigateurs plus anciens
     rollupOptions: {
       output: {
         manualChunks: undefined,
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash].[ext]'
+        assetFileNames: 'assets/[name].[hash].[ext]',
+        format: 'iife', // Format IIFE au lieu de modules ES6
+        globals: {
+          'react': 'React',
+          'react-dom': 'ReactDOM'
+        }
       }
     }
   },
