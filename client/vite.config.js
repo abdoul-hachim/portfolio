@@ -3,44 +3,52 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { copyFileSync, readFileSync, writeFileSync } from 'fs'
 
-// Plugin personnalisé pour copier et corriger index.html vers la racine
-const copyIndexToRoot = () => {
+// Plugin personnalisé pour mettre à jour index.html à la racine avec les assets buildés
+const updateRootIndex = () => {
   return {
-    name: 'copy-index-to-root',
-    writeBundle() {
+    name: 'update-root-index',
+    writeBundle(options, bundle) {
       try {
-        const distIndexPath = resolve(__dirname, '../dist/index.html')
         const rootIndexPath = resolve(__dirname, '../index.html')
         
-        // Lire le contenu du fichier dist/index.html
-        let content = readFileSync(distIndexPath, 'utf-8')
+        // Trouver les fichiers JS et CSS générés
+        let jsFile = '';
+        let cssFile = '';
         
-        // Corriger les chemins pour pointer vers dist/ (chemins relatifs pour Hostinger)
-        content = content.replace(/href="\.\//g, 'href="dist/')
-        content = content.replace(/src="\.\//g, 'src="dist/')
-        content = content.replace(/href="\/assets\//g, 'href="dist/assets/')
-        content = content.replace(/src="\/assets\//g, 'src="dist/assets/')
-        content = content.replace(/href="\/images\//g, 'href="dist/images/')
-        content = content.replace(/src="\/images\//g, 'src="dist/images/')
+        for (const fileName of Object.keys(bundle)) {
+          if (fileName.endsWith('.js') && (fileName.includes('main') || fileName.includes('index'))) {
+            jsFile = fileName;
+          }
+          if (fileName.endsWith('.css')) {
+            cssFile = fileName;
+          }
+        }
         
-        // S'assurer que les scripts sont dans le body, pas dans le head
+        // Lire le fichier index.html existant à la racine
+        let content = readFileSync(rootIndexPath, 'utf-8')
+        
+        // Remplacer le script de développement par le script de production
         content = content.replace(
-          /(<head>[\s\S]*?)(<script[^>]*>[\s\S]*?<\/script>)([\s\S]*?<\/head>)([\s\S]*?)(<div id="root"><\/div>)/,
-          '$1$3$4$5\n    $2'
+          /<script src="client\/src\/main\.jsx"><\/script>/,
+          `<script src="dist/assets/${jsFile}"></script>`
         )
         
-        // Retirer type="module" pour la compatibilité hébergeur
-        content = content.replace(/type="module"\s*/g, '')
+        // Supprimer les scripts vides s'il y en a
+        content = content.replace(/<script src="dist\/assets\/"><\/script>\s*/g, '')
         
-        // Ajouter des paramètres de cache-busting
-        content = content.replace(/\.js"/g, '.js?v=1.0"')
-        content = content.replace(/\.css"/g, '.css?v=1.0"')
+        // Ajouter le CSS s'il existe
+        if (cssFile) {
+          content = content.replace(
+            /<\/head>/,
+            `    <link rel="stylesheet" href="dist/assets/${cssFile}">\n  </head>`
+          )
+        }
         
-        // Écrire le fichier corrigé à la racine
+        // Écrire le fichier mis à jour
         writeFileSync(rootIndexPath, content)
-        console.log('✅ index.html copié et corrigé vers la racine pour Hostinger')
+        console.log('✅ index.html à la racine mis à jour avec les assets buildés')
       } catch (error) {
-        console.error('❌ Erreur lors de la copie:', error.message)
+        console.error('❌ Erreur lors de la mise à jour:', error.message)
       }
     }
   }
@@ -48,7 +56,7 @@ const copyIndexToRoot = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), copyIndexToRoot()],
+  plugins: [react(), updateRootIndex()],
   publicDir: 'public',
   base: './',
   build: {
@@ -57,6 +65,7 @@ export default defineConfig({
     minify: 'terser',
     target: 'es2015', // Support des navigateurs plus anciens
     rollupOptions: {
+      input: resolve(__dirname, 'src/main.jsx'), // Point d'entrée direct vers main.jsx
       output: {
         manualChunks: undefined,
         entryFileNames: 'assets/[name].[hash].js',

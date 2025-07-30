@@ -2,28 +2,9 @@
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
-  
-  # Exclure les fichiers assets (JS, CSS, images) de la redirection
-  RewriteCond %{REQUEST_URI} !^/assets/
-  RewriteCond %{REQUEST_URI} !^/dist/assets/
-  RewriteCond %{REQUEST_URI} !\.js$
-  RewriteCond %{REQUEST_URI} !\.css$
-  RewriteCond %{REQUEST_URI} !\.png$
-  RewriteCond %{REQUEST_URI} !\.jpg$
-  RewriteCond %{REQUEST_URI} !\.jpeg$
-  RewriteCond %{REQUEST_URI} !\.gif$
-  RewriteCond %{REQUEST_URI} !\.svg$
-  RewriteCond %{REQUEST_URI} !\.pdf$
-  
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
-</IfModule>
-
-# Configuration MIME types pour JavaScript
-<IfModule mod_mime.c>
-    AddType application/javascript .js
-    AddType text/javascript .js
 </IfModule>
 
 # Configuration CORS si nécessaire
