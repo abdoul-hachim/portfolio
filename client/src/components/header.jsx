@@ -32,6 +32,13 @@ const Header = () => {
     return location.pathname === path;
   };
 
+  // Fermer le menu mobile après une navigation (changement de route)
+  useEffect(() => {
+    if (isOpen) {
+      setIsOpen(false);
+    }
+  }, [location.pathname]);
+
   return (
     <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-dark-800 shadow-nav py-2' : 'bg-header py-3'}`}>
       <nav className="px-4">
@@ -43,40 +50,44 @@ const Header = () => {
           </div>
           
           <ul className={`${isOpen ? 'flex flex-col mobile-menu-open' : 'hidden'} absolute top-16 left-0 right-0 bg-dark-800 p-6 space-y-4 md:space-y-0 md:p-0 md:static md:flex md:flex-row md:space-x-8 md:bg-transparent shadow-lg md:shadow-none transition-all duration-300 ease-in-out`}>
-            <li className="relative group">
-              <Link 
-                to="/" 
-                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md inline-block ${isActive('/') ? 'text-primary' : ''}`}
+            <li className="relative group cursor-pointer">
+              <Link
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md block w-full md:inline-block md:w-auto ${isActive('/') ? 'text-primary' : ''}`}
               >
                 Accueil
                 <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300 ${isActive('/') ? 'w-full' : 'group-hover:w-full'}`}></span>
               </Link>
             </li>
             
-            <li className="relative group">
-              <Link 
-                to="/liste_project" 
-                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md inline-block ${isActive('/liste_project') ? 'text-primary' : ''}`}
+            <li className="relative group cursor-pointer">
+              <Link
+                to="/liste_project"
+                onClick={() => setIsOpen(false)}
+                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md block w-full md:inline-block md:w-auto ${isActive('/liste_project') ? 'text-primary' : ''}`}
               >
                 Projet
                 <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300 ${isActive('/liste_project') ? 'w-full' : 'group-hover:w-full'}`}></span>
               </Link>
             </li>
             
-            <li className="relative group">
-              <Link 
-                to="/study" 
-                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md inline-block ${isActive('/study') ? 'text-primary' : ''}`}
+            <li className="relative group cursor-pointer">
+              <Link
+                to="/study"
+                onClick={() => setIsOpen(false)}
+                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md block w-full md:inline-block md:w-auto ${isActive('/study') ? 'text-primary' : ''}`}
               >
                 Languages Study
                 <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300 ${isActive('/study') ? 'w-full' : 'group-hover:w-full'}`}></span>
               </Link>
             </li>
             
-            <li className="relative group">
-              <Link 
-                to="/contact" 
-                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md inline-block ${isActive('/contact') ? 'text-primary' : ''}`}
+            <li className="relative group cursor-pointer">
+              <Link
+                to="/contact"
+                onClick={() => setIsOpen(false)}
+                className={`nav-link text-secondary group-hover:text-primary transition-all duration-200 py-2 px-3 rounded-md block w-full md:inline-block md:w-auto ${isActive('/contact') ? 'text-primary' : ''}`}
               >
                 Contact
                 <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'group-hover:w-full'}`}></span>

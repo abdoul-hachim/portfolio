@@ -25,6 +25,14 @@
     @apply bg-accent-400 text-white hover:bg-accent-500;
   }
   
+  /* Bouton secondaire (téléchargement CV) */
+  .btn-secondary {
+    @apply bg-dark-600 text-white hover:bg-dark-500 border border-dark-500;
+  }
+  .btn-secondary:hover {
+    @apply shadow-glow translate-y-[-1px];
+  }
+  
   /* Styles pour le header et la navigation */
   .nav-link {
     @apply relative overflow-hidden;

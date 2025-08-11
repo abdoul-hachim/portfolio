@@ -1,35 +1,18 @@
 // Version clean à utiliser après tests
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ListeProject = () => {
-  // Fonction pour obtenir le chemin de l'image avec fallback
+  // Fonction pour obtenir le chemin de l'image (compatibilité sous-répertoire via BASE_URL)
   const getImagePath = (imageName) => {
-    // Essayer plusieurs chemins possibles
-    const paths = [
-      `/images/${imageName}`,
-      `./images/${imageName}`,
-      `/dist/images/${imageName}`,
-      `./dist/images/${imageName}`
-    ];
-    return paths[0]; // Commencer par le chemin principal
+    return `${import.meta.env.BASE_URL}images/${imageName}`;
   };
 
-  // Fonction pour gérer les erreurs d'images
-  const handleImageError = (e, imageName) => {
-    const paths = [
-      `/images/${imageName}`,
-      `./images/${imageName}`,
-      `/dist/images/${imageName}`,
-      `./dist/images/${imageName}`,
-      `https://via.placeholder.com/400x300?text=Image+Non+Disponible`
-    ];
-    
-    const currentSrc = e.target.src;
-    const currentIndex = paths.findIndex(path => currentSrc.includes(path.split('/').pop()));
-    
-    if (currentIndex < paths.length - 1) {
-      e.target.src = window.location.origin + paths[currentIndex + 1];
+  // Fonction pour gérer les erreurs d'images (fallback simple)
+  const handleImageError = (e) => {
+    if (!e.currentTarget.dataset.retried) {
+      e.currentTarget.dataset.retried = 'true';
+      e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Non+Disponible';
     }
   };
 
@@ -85,10 +68,11 @@ const ListeProject = () => {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     opacity: 0,
     transition: 'opacity 0.3s ease',
-    zIndex: 10
+    zIndex: 10,
+    pointerEvents: 'none'
   };
 
   const contentStyle = {
@@ -125,6 +109,17 @@ const ListeProject = () => {
     lineHeight: '1.4'
   };
 
+  const navigate = useNavigate();
+
+  const handleCardClick = (lien) => {
+    if (!lien) return;
+    if (lien.startsWith('http')) {
+      window.open(lien, '_blank', 'noopener');
+    } else {
+      navigate(lien);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 bg-site">
       <div className="max-w-7xl mx-auto">
@@ -137,12 +132,22 @@ const ListeProject = () => {
           {projets.map((projet) => (
             <div 
               key={projet.id} 
-              className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card"
+              className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card cursor-pointer"
+              role="button"
+              tabIndex={0}
+              aria-label={`Ouvrir le projet: ${projet.titre}`}
+              onClick={() => handleCardClick(projet.lien)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCardClick(projet.lien);
+                }
+              }}
             >
               <img 
                 src={getImagePath(projet.image)}
                 alt={projet.titre}
-                className="w-full h-64 object-cover"
+                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => handleImageError(e, projet.image)}
                 loading="lazy"
               />
@@ -160,39 +165,7 @@ const ListeProject = () => {
                 <p style={descriptionStyle}>
                   {projet.description}
                 </p>
-                {projet.lien.startsWith('http') ? (
-                  <a 
-                    href={projet.lien}
-                    className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
-                    style={{
-                      backgroundColor: '#1d4ed8',
-                      color: '#ffffff',
-                      padding: '8px 24px',
-                      borderRadius: '9999px',
-                      textDecoration: 'none',
-                      transition: 'background-color 0.3s ease'
-                    }}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Découvrir le projet
-                  </a>
-                ) : (
-                  <Link 
-                    to={projet.lien}
-                    className="px-6 py-2 bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors duration-300"
-                    style={{
-                      backgroundColor: '#1d4ed8',
-                      color: '#ffffff',
-                      padding: '8px 24px',
-                      borderRadius: '9999px',
-                      textDecoration: 'none',
-                      transition: 'background-color 0.3s ease'
-                    }}
-                  >
-                    Découvrir le projet
-                  </Link>
-                )}
+                <span className="mt-2 text-white/80 text-sm">Cliquer pour ouvrir</span>
               </div>
             </div>
           ))}

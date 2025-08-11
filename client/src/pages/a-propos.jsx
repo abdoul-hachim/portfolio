@@ -182,26 +182,12 @@ const AboutPage = () => {
             }}
           >
             <img
-              src="./images/pp.JPG"
+              src={`${import.meta.env.BASE_URL}images/pp.JPG`}
               alt="Photo de profil"
               className="w-64 h-64 object-cover"
               onError={(e) => {
-                e.target.onerror = null;
-                // Essayer plusieurs chemins possibles
-                const fallbacks = [
-                  '/images/pp.JPG',
-                  './images/pp.JPG',
-                  '/dist/images/pp.JPG',
-                  './dist/images/pp.JPG',
-                  'https://via.placeholder.com/256x256?text=Profile'
-                ];
-                const currentSrc = e.target.src;
-                const currentIndex = fallbacks.findIndex(path => currentSrc.includes(path.split('/').pop()));
-                if (currentIndex < fallbacks.length - 1) {
-                  e.target.src = window.location.origin + fallbacks[currentIndex + 1];
-                } else {
-                  e.target.src = 'https://via.placeholder.com/256x256?text=Profile';
-                }
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = 'https://via.placeholder.com/256x256?text=Profile';
               }}
               loading="lazy"
             />
@@ -225,7 +211,7 @@ const AboutPage = () => {
             <Link to="/liste_project" className="btn btn-primary hover:animate-pulse-slow">Voir mes projets</Link>
             <Link to="/contact" className="btn btn-accent hover:animate-pulse-slow">Me contacter</Link>
             <a 
-              href="/CV.pdf" 
+              href={`${import.meta.env.BASE_URL}CV.pdf`} 
               download="MZE_Abdoul-Hachim_CV.pdf" 
               className="btn btn-secondary flex items-center gap-2 hover:animate-pulse-slow"
               rel="noopener noreferrer"

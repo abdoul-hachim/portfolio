@@ -52,7 +52,8 @@ const ContactPage = () => {
   }, [SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY]);
 
   // Fonction pour prétraiter le message avant l'envoi
-  const prepareMessageForEmail = (message) => {
+  const prepareMessageForEmail = (message, senderEmail) => {
+    const safeEmail = DOMPurify.sanitize(senderEmail || '');
     // Sanitize le message d'abord
     const sanitizedMessage = DOMPurify.sanitize(message);
     
@@ -65,8 +66,17 @@ const ContactPage = () => {
       '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #1d4ed8; text-decoration: underline;">$1</a>'
     );
     
-    // Sanitize à nouveau après avoir ajouté les liens
-    return DOMPurify.sanitize(messageWithLinks);
+    // Encapsule avec un en-tête contenant l'email de l'expéditeur
+    const withHeader = `
+      <div>
+        <p><strong>Expéditeur :</strong> ${safeEmail}</p>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0;" />
+        <div>${messageWithLinks}</div>
+      </div>
+    `;
+    
+    // Sanitize final
+    return DOMPurify.sanitize(withHeader);
   };
 
   // Effet de parallaxe pour suivre la souris
@@ -166,7 +176,9 @@ const ContactPage = () => {
       try {
         const templateParams = {
           email: formData.email,
-          message: prepareMessageForEmail(formData.message)
+          from_email: formData.email,
+          reply_to: formData.email,
+          message: prepareMessageForEmail(formData.message, formData.email)
         };
 
         const result = await emailjs.send(
