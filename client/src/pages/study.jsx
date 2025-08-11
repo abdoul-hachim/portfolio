@@ -46,6 +46,15 @@ const Study = () => {
     };
   }, []);
 
+  // À l'arrivée sur la page study sans hash, remonter en haut de page
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // exécuter uniquement au montage
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Gérer le scroll vers une compétence ciblée via le hash (ex: /study#react)
   useEffect(() => {
     if (!location.hash) return;

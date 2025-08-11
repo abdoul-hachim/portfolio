@@ -7,6 +7,7 @@ import Study from './pages/study.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Header from './components/header.jsx'
 import Footer from './components/footer.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
       <Router>
+        <ScrollToTop />
         <Header />
         <div className="pt-20 min-h-screen"> {/* Ajout d'un padding-top de 5rem (20 * 0.25rem) et hauteur minimale */}
           <Routes>
