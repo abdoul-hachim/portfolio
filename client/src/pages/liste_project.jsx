@@ -32,34 +32,7 @@ const ListeProject = () => {
       description: "Application de gestion complète pour les écoles et centres de formation. Système intégré permettant la gestion des étudiants, des cours, des inscriptions et du suivi pédagogique.",
       lien: "https://peru-ape-766379.hostingersite.com/login"
     },
-    {
-      id: 3,
-      titre: "Projet 3",
-      image: "image1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempus placerat fringilla. Duis a elit et dolor laoreet volutpat.",
-      lien: "/projet/3"
-    },
-    {
-      id: 4,
-      titre: "Projet 4",
-      image: "image1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et diam eget libero egestas mattis sit amet vitae augue.",
-      lien: "/projet/4"
-    },
-    {
-      id: 5,
-      titre: "Projet 5",
-      image: "image1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sodales congue tristique. Cras non pretium sem.",
-      lien: "/projet/5"
-    },
-    {
-      id: 6,
-      titre: "Projet 6",
-      image: "image1.png",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit mauris ac porttitor accumsan. Nunc vitae pulvinar odio, quis dignissim sem.",
-      lien: "/projet/6"
-    }
+   
   ];
 
   const overlayStyle = {
