@@ -1,5 +1,5 @@
 // Version clean à utiliser après tests
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ListeProject = () => {
@@ -42,7 +42,6 @@ const ListeProject = () => {
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    opacity: 0,
     transition: 'opacity 0.3s ease',
     zIndex: 10,
     pointerEvents: 'none'
@@ -59,7 +58,6 @@ const ListeProject = () => {
     justifyContent: 'center',
     alignItems: 'center',
     padding: '24px',
-    opacity: 0,
     transition: 'opacity 0.3s ease',
     zIndex: 20
   };
@@ -84,12 +82,52 @@ const ListeProject = () => {
 
   const navigate = useNavigate();
 
-  const handleCardClick = (lien) => {
+  // Détection des appareils pouvant gérer le hover
+  const [canHover, setCanHover] = useState(true);
+  const [activeCardId, setActiveCardId] = useState(null);
+
+  useEffect(() => {
+    // Si l'environnement supporte matchMedia
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      const mq = window.matchMedia('(hover: hover)');
+      const updateCapability = () => setCanHover(mq.matches);
+      updateCapability();
+      if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', updateCapability);
+        return () => mq.removeEventListener('change', updateCapability);
+      }
+      // Fallback Safari iOS < 13
+      if (typeof mq.addListener === 'function') {
+        mq.addListener(updateCapability);
+        return () => mq.removeListener(updateCapability);
+      }
+    }
+    // Fallback ultime: si touch détecté, considérer pas de hover
+    // eslint-disable-next-line no-restricted-globals
+    const hasTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    setCanHover(!hasTouch);
+  }, []);
+
+  const handleOpenLink = (lien) => {
     if (!lien) return;
     if (lien.startsWith('http')) {
       window.open(lien, '_blank', 'noopener');
     } else {
       navigate(lien);
+    }
+  };
+
+  const handleCardClick = (projet) => {
+    if (canHover) {
+      // Desktop: ouvrir directement
+      handleOpenLink(projet.lien);
+      return;
+    }
+    // Mobile / pas de hover: 1er clic -> activer, 2e clic -> ouvrir
+    if (activeCardId !== projet.id) {
+      setActiveCardId(projet.id);
+    } else {
+      handleOpenLink(projet.lien);
     }
   };
 
@@ -109,11 +147,12 @@ const ListeProject = () => {
               role="button"
               tabIndex={0}
               aria-label={`Ouvrir le projet: ${projet.titre}`}
-              onClick={() => handleCardClick(projet.lien)}
+              onClick={() => handleCardClick(projet)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleCardClick(projet.lien);
+                  // Accessibilité clavier: ouvrir directement
+                  handleOpenLink(projet.lien);
                 }
               }}
             >
@@ -124,13 +163,13 @@ const ListeProject = () => {
                 onError={(e) => handleImageError(e, projet.image)}
                 loading="lazy"
               />
-              <div 
+              <div
                 style={overlayStyle}
-                className="group-hover:opacity-100"
+                className={`transition-opacity group-hover:opacity-100 ${(!canHover && activeCardId === projet.id) ? 'opacity-100' : 'opacity-0'}`}
               ></div>
-              <div 
+              <div
                 style={contentStyle}
-                className="group-hover:opacity-100"
+                className={`transition-opacity group-hover:opacity-100 ${(!canHover && activeCardId === projet.id) ? 'opacity-100' : 'opacity-0'}`}
               >
                 <h2 style={titleStyle}>
                   {projet.titre}
@@ -138,7 +177,29 @@ const ListeProject = () => {
                 <p style={descriptionStyle}>
                   {projet.description}
                 </p>
-                <span className="mt-2 text-white/80 text-sm">Cliquer pour ouvrir</span>
+                {canHover ? (
+                  <span className="mt-2 text-white/80 text-sm">Cliquer pour ouvrir</span>
+                ) : (
+                  <>
+                    {activeCardId === projet.id ? (
+                      <>
+                        <span className="mt-2 text-white/80 text-sm">Touchez encore pour ouvrir</span>
+                        <button
+                          type="button"
+                          className="mt-3 px-4 py-2 bg-primary text-white rounded shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenLink(projet.lien);
+                          }}
+                        >
+                          Ouvrir le projet
+                        </button>
+                      </>
+                    ) : (
+                      <span className="mt-2 text-white/80 text-sm">Touchez pour voir la description</span>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           ))}

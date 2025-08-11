@@ -344,9 +344,10 @@ const AboutPage = () => {
             
             <div className="space-y-6">
               {frontendSkills.map((skill, index) => (
-                <div 
-                  key={index} 
-                  className="skill-card bg-card rounded-lg p-4 shadow-md hover:shadow-glow transition-all duration-300"
+                <Link
+                  to={`/study#${skill.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '-')}`}
+                  key={index}
+                  className="block skill-card bg-card rounded-lg p-4 shadow-md hover:shadow-glow transition-all duration-300"
                   style={{
                     transform: `perspective(1000px) rotateX(${mousePosition.y * 5}deg)`,
                     transition: 'all 0.3s ease'
@@ -356,7 +357,7 @@ const AboutPage = () => {
                     <div className="text-2xl mr-2">{skill.icon}</div>
                     <span className="font-medium">{skill.name}</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -369,9 +370,10 @@ const AboutPage = () => {
             
             <div className="space-y-6">
               {backendSkills.map((skill, index) => (
-                <div 
-                  key={index} 
-                  className="skill-card bg-card rounded-lg p-4 shadow-md hover:shadow-glow transition-all duration-300"
+                <Link
+                  to={`/study#${skill.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '-')}`}
+                  key={index}
+                  className="block skill-card bg-card rounded-lg p-4 shadow-md hover:shadow-glow transition-all duration-300"
                   style={{
                     transform: `perspective(1000px) rotateX(${mousePosition.y * 5}deg)`,
                     transition: 'all 0.3s ease'
@@ -381,7 +383,7 @@ const AboutPage = () => {
                     <div className="text-2xl mr-2">{skill.icon}</div>
                     <span className="font-medium">{skill.name}</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

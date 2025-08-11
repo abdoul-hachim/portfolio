@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { SiJavascript, SiReact, SiHtml5, SiCss3, SiTailwindcss, SiNodedotjs, SiExpress, SiMongodb, SiPhp, SiSymfony } from 'react-icons/si';
@@ -8,6 +9,17 @@ const Study = () => {
   const [activeLanguage, setActiveLanguage] = useState(null);
   const cardsRef = useRef([]);
   const containerRef = useRef(null);
+  const location = useLocation();
+
+  const slugify = (text) =>
+    text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\./g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\-]/g, '')
+      .replace(/\-+/g, '-');
 
   // Effet pour l'animation des cartes lors du défilement
   useEffect(() => {
@@ -33,6 +45,26 @@ const Study = () => {
       });
     };
   }, []);
+
+  // Gérer le scroll vers une compétence ciblée via le hash (ex: /study#react)
+  useEffect(() => {
+    if (!location.hash) return;
+    const targetSlug = location.hash.slice(1).toLowerCase();
+    const targetIndex = languages.findIndex((l) => slugify(l.name) === targetSlug);
+    if (targetIndex === -1) return;
+
+    // Activer la carte correspondante
+    setActiveLanguage(languages[targetIndex].id);
+
+    // Faire défiler avec compensation du header fixe
+    const targetEl = cardsRef.current[targetIndex];
+    if (targetEl) {
+      const headerEl = document.querySelector('header');
+      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+      const y = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [location.hash]);
 
   // Liste des langages et technologies
   const languages = [
@@ -137,9 +169,20 @@ const Study = () => {
     }
   ];
 
-  // Fonction pour gérer le clic sur une carte
-  const handleCardClick = (id) => {
-    setActiveLanguage(activeLanguage === id ? null : id);
+  // Fonction pour gérer le clic sur une carte + scroll jusqu'à la carte
+  const handleCardClick = (id, index) => {
+    const willActivate = activeLanguage !== id;
+    setActiveLanguage(willActivate ? id : null);
+    // Toujours faire défiler jusqu'à la carte pour garantir la visibilité
+    setTimeout(() => {
+      const targetEl = cardsRef.current[index];
+      if (targetEl) {
+        const headerEl = document.querySelector('header');
+        const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+        const y = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 0);
   };
 
   return (
@@ -172,13 +215,14 @@ const Study = () => {
           <motion.div
             key={language.id}
             ref={(el) => (cardsRef.current[index] = el)}
+            id={`skill-${slugify(language.name)}`}
             className={`language-card bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${
               activeLanguage === language.id ? 'scale-105 shadow-glow z-10' : 'hover:shadow-md hover:translate-y-[-5px]'
             }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            onClick={() => handleCardClick(language.id)}
+            onClick={() => handleCardClick(language.id, index)}
           >
             <div className="p-6">
               <div className="flex items-center mb-4">
